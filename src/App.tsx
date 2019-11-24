@@ -1,31 +1,34 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+import ManifestProvider from './common/components/ManifestProvider';
 import TopNav from './common/components/TopNav';
 import Dashboard from './dashboard';
 import Home from './home';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <AppContainer>
-        <TopNav />
-        <AppBody>
+    <ManifestProvider>
+      <BrowserRouter>
+        <AppContainer>
+          <TopNav />
+          <AppBody>
 
-          <Switch>
-            <Route
-              path="/dashboard/:dashboardSlug"
-              children={<Dashboard />}
-            />
-            <Route
-              path="/"
-              children={<Home />}
-            />
-          </Switch>
+            <Switch>
+              <Route
+                path="/dashboard/:dashboardSlug"
+                children={<Dashboard />}
+              />
+              <Route
+                path="/"
+                children={<Home />}
+              />
+            </Switch>
 
-        </AppBody>
-      </AppContainer>
-    </BrowserRouter>
+          </AppBody>
+        </AppContainer>
+      </BrowserRouter>
+    </ManifestProvider>
   );
 }
 

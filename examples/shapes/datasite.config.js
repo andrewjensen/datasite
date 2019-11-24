@@ -33,6 +33,7 @@ module.exports = {
   dashboards: [
     {
       title: 'Data about Shapes',
+      slug: 'data-about-shapes',
       description: 'This shows data about a lot of shapes.\n\nRead *all* about it.',
       dataset: 'SHAPES',
       filters: []

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router';
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import List from '@material-ui/core/List';
@@ -14,32 +13,28 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import HomeIcon from '@material-ui/icons/Home';
 
+import ManifestContext from '../state/ManifestContext';
+
 interface NavDashboard {
   slug: string
   title: string
 }
 
-const EXAMPLE_DASHBOARDS: NavDashboard[] = [
-  {
-    slug: 'myapp-dependency-usage',
-    title: 'MyApp: Dependency usage'
-  },
-  {
-    slug: 'myapp-design-system-usage',
-    title: 'MyApp: Design System usage'
-  }
-];
-
 interface Props {
 }
 
 const TopNav: React.FC<Props> = () => {
+  const { manifest } = useContext(ManifestContext);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+  const title = manifest ? manifest.general.title : 'Loading...';
+  const dashboards = manifest ? manifest.dashboards : [];
+
   return (
     <AppBar position="static">
 
       <NavDrawer
-        dashboards={EXAMPLE_DASHBOARDS}
+        dashboards={dashboards}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
       />
@@ -54,9 +49,8 @@ const TopNav: React.FC<Props> = () => {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6">
-          My Static Analysis Website
+          {title}
         </Typography>
-        <Button color="inherit">Login</Button>
       </Toolbar>
     </AppBar>
   )

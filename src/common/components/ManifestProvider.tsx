@@ -46,7 +46,7 @@ async function fetchManifest(): Promise<Manifest> {
     const mockManifest: Manifest = {
       general: {
         title: 'Mock Datasite Title',
-        description: 'This is my mock datasite!'
+        description: 'This is my mock datasite!\n\nIt looks great.'
       },
       dashboards: [
         {

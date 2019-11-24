@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router';
+import styled from 'styled-components';
+import { Link, useHistory } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -48,9 +49,7 @@ const TopNav: React.FC<Props> = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6">
-          {title}
-        </Typography>
+        <SiteTitle>{title}</SiteTitle>
       </Toolbar>
     </AppBar>
   )
@@ -104,3 +103,20 @@ const NavDrawer: React.FC<NavDrawerProps> = ({
     </Drawer>
   )
 };
+
+const SiteTitle: React.FC = ({ children }) => (
+  <Typography variant="h6">
+    <SiteTitleLink to="/">
+      {children}
+    </SiteTitleLink>
+  </Typography>
+);
+
+const SiteTitleLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;

@@ -2,6 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 const writeFile = promisify(fs.writeFile);
+const chalk = require('chalk');
+const execa = require('execa');
+
+const PREBUILT_DIRECTORY = path.resolve(__dirname, '..', '..', 'build');
 
 const program = require('commander');
 
@@ -13,47 +17,76 @@ program.parse(process.argv);
 run(program);
 
 async function run(program) {
-  const configPath = resolvePath(program.config);
-  const config = require(configPath);
+  try {
+    console.log(chalk.bold('Loading config...'));
+    const configPath = resolvePath(program.config);
+    const config = require(configPath);
 
-  handleConfig(config);
+    console.log(chalk.bold('Processing build directory...'));
+    await processBuildDirectory();
+
+    for (let dataset of config.datasets) {
+      console.log(chalk.bold(`Processing dataset ${chalk.cyan(dataset.id)}...`));
+      await processDataset(dataset);
+    }
+
+    console.log(chalk.bold('Creating manifest file...'));
+    await createManifestFile(config);
+
+    console.log(chalk.bold.green('Done.'));
+  } catch (err) {
+    console.log(chalk.red('Error while generating datasite:'));
+    console.log(err);
+    process.exit(1);
+  }
 }
 
-async function handleConfig(config) {
+async function processBuildDirectory() {
+  const buildDirPath = resolvePath('build');
 
-  console.log('config:', config);
-
-  const datasetConfig = config.datasets[0];
-
-  await handleDataset(datasetConfig);
+  await execa('rm', ['-rf', buildDirPath]);
+  await execa('mkdir', [buildDirPath]);
+  await execa('cp', ['-R', `${PREBUILT_DIRECTORY}/`, `${buildDirPath}/`]);
 }
 
-async function handleDataset(datasetConfig) {
-  console.log('dataset', datasetConfig);
+async function processDataset(datasetConfig) {
+  const inputPath = resolvePath(datasetConfig.inputFile);
+  const inputContents = require(inputPath);
 
-  const inputPath = resolvePath(datasetConfig.input);
-
-  const contents = require(inputPath);
-
-  const rows = datasetConfig.datasetToRows(contents);
-
-  console.log('rows:', rows);
-
-  const outputPath = resolvePath(`datasets-output/dataset-${datasetConfig.id}.json`);
-
-  console.log('output path:', outputPath);
-
+  const rows = datasetConfig.inputToRows(inputContents);
   const dataset = {
     id: datasetConfig.id,
     headers: datasetConfig.headers,
     rows: rows
   };
 
-  const outputJson = JSON.stringify(dataset, null, 2);
+  const outputPath = resolvePath(`build/dataset-${datasetConfig.id}.json`);
+  await writeJsonFile(dataset, outputPath);
+}
 
-  await writeFile(outputPath, outputJson);
+async function createManifestFile(config) {
+  const manifest = {
+    general: {
+      title: config.general.title,
+      description: config.general.description
+    },
+    datasets: config.datasets
+      .map(dataset => ({
+        id: dataset.id,
+        headers: dataset.headers
+      })),
+    dashboards: config.dashboards
+  };
 
-  console.log('Saved output file.');
+  const outputPath = resolvePath('build/datasite.manifest.json');
+  await writeJsonFile(manifest, outputPath);
+}
+
+// Filesystem Utilities
+
+async function writeJsonFile(contents, outputPath) {
+  const contentsJson = JSON.stringify(contents, null, 2);
+  await writeFile(outputPath, contentsJson);
 }
 
 function resolvePath(relativePath) {

@@ -70,11 +70,6 @@ async function createManifestFile(config) {
       title: config.general.title,
       description: config.general.description
     },
-    datasets: config.datasets
-      .map(dataset => ({
-        id: dataset.id,
-        headers: dataset.headers
-      })),
     dashboards: config.dashboards
   };
 

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import ManifestContext from '../state/ManifestContext';
 import { Manifest } from '../interfaces';
-import process from 'process';
 
-const MANIFEST_URL = '/static/datasite.manifest.json';
+const MANIFEST_URL = '/datasite.manifest.json';
 
 const ManifestProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,7 +31,7 @@ const ManifestProvider: React.FC = ({ children }) => {
 export default ManifestProvider;
 
 async function fetchManifest(): Promise<Manifest> {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'development') {
     return fetch(MANIFEST_URL)
       .then(response => response.json())
       .then(json => {

@@ -23,7 +23,8 @@ const Dashboard: React.FC = () => {
 
   const allRows = MOCK_DATA;
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
+  const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(INITIAL_FILTERS);
   const [rows, setRows] = useState<DataRow[]>(allRows);
   const [orderSetting, setOrderSetting] = useState<OrderSetting>(INITIAL_ORDER_SETTING);
@@ -50,12 +51,26 @@ const Dashboard: React.FC = () => {
   }
 
   async function updateTableData(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
-    setIsLoading(true);
+    setIsTableLoading(true);
 
     const newData = await applyTableSettingsAsync(allRows, currentFilters, currentOrderSetting);
     setRows(newData);
 
-    setIsLoading(false);
+    setIsTableLoading(false);
+  }
+
+  function renderLoadingState() {
+    return (
+      <Container>
+        <LoadingMessage>
+          Loading...
+        </LoadingMessage>
+      </Container>
+    );
+  }
+
+  if (isPageLoading) {
+    return renderLoadingState();
   }
 
   return (
@@ -80,7 +95,7 @@ const Dashboard: React.FC = () => {
 
         <TableContainer>
           <DashboardTable
-            isLoading={isLoading}
+            isLoading={isTableLoading}
             headers={HEADERS}
             rows={rows}
             orderSetting={orderSetting}
@@ -119,6 +134,11 @@ const Header = styled.h1`
   font-weight: bold;
 `;
 
+const LoadingMessage = styled.div`
+  margin: 5rem 0;
+  text-align: center;
+  font-size: 20px;
+`;
 
 const Description: React.FC = () => (
   <DescriptionContainer>

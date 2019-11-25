@@ -17,7 +17,6 @@ const ManifestProvider: React.FC = ({ children }) => {
       });
   }, []);
 
-  // TODO: fetch manifest, maintain state
   return (
     <ManifestContext.Provider value={{
       loading: loading,

@@ -6,8 +6,12 @@
   "scripts": {
     "start": "npm run build",
     "build": "../../bin/datasite --config ./datasite.config.js",
+    "serve": "http-server -p 3500 ./build/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import ManifestProvider from './common/components/ManifestProvider';
 import TopNav from './common/components/TopNav';
@@ -9,7 +9,7 @@ import Home from './home';
 const App: React.FC = () => {
   return (
     <ManifestProvider>
-      <BrowserRouter>
+      <HashRouter>
         <AppContainer>
           <TopNav />
           <AppBody>
@@ -27,7 +27,7 @@ const App: React.FC = () => {
 
           </AppBody>
         </AppContainer>
-      </BrowserRouter>
+      </HashRouter>
     </ManifestProvider>
   );
 }

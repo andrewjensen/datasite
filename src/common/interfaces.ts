@@ -1,4 +1,4 @@
-import { FilterSetting } from '../dashboard/interfaces';
+import { FilterSetting, DataHeader, DataRow } from '../dashboard/interfaces';
 
 export interface Manifest {
   general: {
@@ -14,4 +14,10 @@ export interface ManifestDashboard {
   description: string,
   dataset: string,
   filters: FilterSetting[]
+}
+
+export interface Dataset {
+  id: string,
+  headers: DataHeader[],
+  rows: DataRow[]
 }

@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import Markdown from 'markdown-to-jsx';
 
 import { applyTableSettingsAsync } from './services/TableSettings';
 import DashboardTable from './DashboardTable';
 import FilterControlPanel from './filters/FilterControlPanel';
 import FilterContext from './filters/FilterContext';
+import { Dataset, ManifestDashboard } from '../common/interfaces';
 import {
   DataRow,
   FilterSetting,
   OrderSetting
 } from './interfaces';
 import {
-  MOCK_DATA,
-  HEADERS,
   INITIAL_FILTERS,
   INITIAL_ORDER_SETTING
 } from './MockData';
 
 interface Props {
-  // TODO: pass in ManifestDashboard and Dataset instead!
-  dashboardSlug: string
+  dashboard: ManifestDashboard
+  dataset: Dataset
 }
 
 const DashboardView: React.FC<Props> = ({
-  dashboardSlug
+  dashboard,
+  dataset
 }) => {
-  const allRows = MOCK_DATA;
+  const allRows = dataset.rows;
 
-  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(INITIAL_FILTERS);
   const [rows, setRows] = useState<DataRow[]>(allRows);
@@ -63,20 +63,6 @@ const DashboardView: React.FC<Props> = ({
     setIsTableLoading(false);
   }
 
-  function renderLoadingState() {
-    return (
-      <Container>
-        <LoadingMessage>
-          Loading...
-        </LoadingMessage>
-      </Container>
-    );
-  }
-
-  if (isPageLoading) {
-    return renderLoadingState();
-  }
-
   return (
     <FilterContext.Provider value={{
       filters,
@@ -85,22 +71,22 @@ const DashboardView: React.FC<Props> = ({
     }}>
       <Container>
         <InnerItem>
-          <Header>My Dashboard: {dashboardSlug}</Header>
-          <Description />
+          <Header>{dashboard.title}</Header>
+          <Description>{dashboard.description}</Description>
         </InnerItem>
 
         <InnerItem>
           <FilterControlPanel
             displayedRowCount={rows.length}
             totalRowCount={allRows.length}
-            headers={HEADERS}
+            headers={dataset.headers}
           />
         </InnerItem>
 
         <TableContainer>
           <DashboardTable
             isLoading={isTableLoading}
-            headers={HEADERS}
+            headers={dataset.headers}
             rows={rows}
             orderSetting={orderSetting}
             onChangeOrderSetting={updateOrdering}
@@ -138,17 +124,9 @@ const Header = styled.h1`
   font-weight: bold;
 `;
 
-const LoadingMessage = styled.div`
-  margin: 5rem 0;
-  text-align: center;
-  font-size: 20px;
-`;
-
-const Description: React.FC = () => (
+const Description: React.FC = ({ children }) => (
   <DescriptionContainer>
-    <p>Custom dashboard description goes here.</p>
-    <p><i>Markdown</i> should be supported.</p>
-    <p>External <a href="https://google.com">links</a> should work.</p>
+    <Markdown>{children}</Markdown>
   </DescriptionContainer>
 );
 

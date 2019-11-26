@@ -1,5 +1,8 @@
 import uuidv4 from 'uuid/v4';
 import {
+  Dataset
+} from '../common/interfaces';
+import {
   DataHeader,
   DataRow,
   FilterSetting,
@@ -109,3 +112,9 @@ export const INITIAL_ORDER_SETTING: OrderSetting = {
   column: 'color',
   direction: 'asc'
 }
+
+export const MOCK_DATASET: Dataset = {
+  id: 'MOCK_DATASET',
+  headers: HEADERS,
+  rows: MOCK_DATA
+};

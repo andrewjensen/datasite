@@ -44,13 +44,13 @@ async function fetchManifest(): Promise<Manifest> {
     const mockManifest: Manifest = {
       general: {
         title: 'Mock Datasite Title',
-        description: 'This is my mock datasite!\n\nIt looks great.'
+        description: 'This is my mock datasite!\n\nIt looks *great*.'
       },
       dashboards: [
         {
           title: 'My Mock Dashboard',
           slug: 'my-mock-dashboard',
-          description: 'This is my mock dashboard!',
+          description: 'This is my mock dashboard!\n\nIt looks *great*.',
           dataset: 'SHAPES',
           filters: []
         }

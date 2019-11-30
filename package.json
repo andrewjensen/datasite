@@ -13,6 +13,9 @@
     "eject": "react-scripts eject",
     "prepublish": "npm run build"
   },
+  "bin": {
+    "datasite": "./bin/datasite"
+  },
   "dependencies": {
     "chalk": "^3.0.0",
     "commander": "^4.0.1",

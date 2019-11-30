@@ -18,19 +18,19 @@ const Home: React.FC = () => {
   if (manifest) {
     return (
       <Container>
+        <Content>
 
-        <LayoutContainer>
-          <Typography variant="h3">
-            {manifest.general.title}
-          </Typography>
+          <LayoutContainer>
+            <SiteTitle>{manifest.general.title}</SiteTitle>
 
-          <Content>{manifest.general.description}</Content>
+            <MarkdownContent>{manifest.general.description}</MarkdownContent>
 
-          <DashboardList
-            dashboards={manifest.dashboards}
-          />
-        </LayoutContainer>
+            <DashboardList
+              dashboards={manifest.dashboards}
+            />
+          </LayoutContainer>
 
+        </Content>
       </Container>
     );
   } else {
@@ -47,14 +47,24 @@ export default Home;
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  box-sizing: border-box;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   align-content: stretch;
-  padding-top: 1rem;
 `;
 
-const Content: React.FC = ({ children }) => (
+const Content = styled.div`
+  padding: 2rem 0 4rem;
+`;
+
+const SiteTitle = styled.h1`
+  margin: 0 0 1rem;
+  font-weight: normal;
+  font-size: 48px;
+`;
+
+const MarkdownContent: React.FC = ({ children }) => (
   <Markdown>{children}</Markdown>
 );
 

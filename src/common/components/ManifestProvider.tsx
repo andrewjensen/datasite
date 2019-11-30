@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import ManifestContext from '../state/ManifestContext';
 import { Manifest } from '../interfaces';
+import MOCK_MANIFEST from './MockManifest';
 
 const MANIFEST_URL = '/datasite.manifest.json';
 
@@ -41,22 +42,7 @@ async function fetchManifest(): Promise<Manifest> {
         }
       });
   } else {
-    const mockManifest: Manifest = {
-      general: {
-        title: 'Mock Datasite Title',
-        description: 'This is my mock datasite!\n\nIt looks *great*.'
-      },
-      dashboards: [
-        {
-          title: 'My Mock Dashboard',
-          slug: 'my-mock-dashboard',
-          description: 'This is my mock dashboard!\n\nIt looks *great*.',
-          dataset: 'SHAPES',
-          filters: []
-        }
-      ]
-    };
-    return Promise.resolve(mockManifest);
+    return Promise.resolve(MOCK_MANIFEST);
   }
 }
 

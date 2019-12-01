@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Markdown from 'markdown-to-jsx';
 
 import { applyTableSettingsAsync } from './services/TableSettings';
 import DashboardTable from './DashboardTable';
@@ -16,6 +15,7 @@ import {
   INITIAL_FILTERS,
   INITIAL_ORDER_SETTING
 } from './MockData';
+import MarkdownContent from '../common/components/MarkdownContent';
 
 interface Props {
   dashboard: ManifestDashboard
@@ -126,7 +126,7 @@ const Header = styled.h1`
 
 const Description: React.FC = ({ children }) => (
   <DescriptionContainer>
-    <Markdown>{children}</Markdown>
+    <MarkdownContent>{children}</MarkdownContent>
   </DescriptionContainer>
 );
 

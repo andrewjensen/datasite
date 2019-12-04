@@ -3,5 +3,6 @@ NOTES.md
 src/
 temp/
 public/
+examples/
 
 !build/

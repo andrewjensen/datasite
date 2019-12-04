@@ -19,6 +19,10 @@ const MarkdownContent: React.FC = ({ children }) => (
 export default MarkdownContent;
 
 const Container = styled.div`
+  p {
+    line-height: 1.4;
+  }
+
   a:link, a:visited {
     color: #1565C0; /* blue 800 */
   }

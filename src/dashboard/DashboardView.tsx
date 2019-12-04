@@ -107,7 +107,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-content: stretch;
-  padding-top: 1rem;
 `;
 
 const InnerItem = styled.div`
@@ -120,7 +119,7 @@ const TableContainer = styled.div`
 `;
 
 const Header = styled.h1`
-  margin: 0 2rem;
+  margin: 1rem 2rem 2rem;
   font-size: 28px;
   font-weight: bold;
 `;

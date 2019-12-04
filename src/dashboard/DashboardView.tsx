@@ -11,16 +11,17 @@ import {
   FilterSetting,
   OrderSetting
 } from './interfaces';
-import {
-  INITIAL_FILTERS,
-  INITIAL_ORDER_SETTING
-} from './MockData';
 import MarkdownContent from '../common/components/MarkdownContent';
 
 interface Props {
   dashboard: ManifestDashboard
   dataset: Dataset
 }
+
+const EMPTY_ORDER_SETTING: OrderSetting = {
+  column: null,
+  direction: 'asc'
+};
 
 const DashboardView: React.FC<Props> = ({
   dashboard,
@@ -29,9 +30,9 @@ const DashboardView: React.FC<Props> = ({
   const allRows = dataset.rows;
 
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<FilterSetting[]>(INITIAL_FILTERS);
+  const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
   const [rows, setRows] = useState<DataRow[]>(allRows);
-  const [orderSetting, setOrderSetting] = useState<OrderSetting>(INITIAL_ORDER_SETTING);
+  const [orderSetting, setOrderSetting] = useState<OrderSetting>(EMPTY_ORDER_SETTING);
 
   function onToggleFilter(id: number) {
     const newFilters = filters

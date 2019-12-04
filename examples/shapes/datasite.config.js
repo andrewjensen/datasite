@@ -36,7 +36,20 @@ module.exports = {
       slug: 'data-about-shapes',
       description: 'This shows data about a lot of shapes.\n\nRead *all* about it.',
       dataset: 'SHAPES',
-      filters: []
+      filters: [
+        {
+          id: 1,
+          column: 'shape',
+          filterValue: 'triangle',
+          enabled: false
+        },
+        {
+          id: 2,
+          column: 'deluxe',
+          filterValue: 'true',
+          enabled: false
+        }
+      ]
     }
   ]
 };

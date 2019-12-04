@@ -51,7 +51,32 @@ Test two three
       slug: 'my-mock-dashboard',
       description: 'This is my mock dashboard!\n\nIt looks *great*.',
       dataset: 'SHAPES',
-      filters: []
+      filters: [
+        {
+          id: 1,
+          column: 'color',
+          filterValue: 'blue',
+          enabled: false
+        },
+        {
+          id: 2,
+          column: 'color',
+          filterValue: 'red',
+          enabled: false
+        },
+        {
+          id: 3,
+          column: 'shape',
+          filterValue: 'circle',
+          enabled: false
+        },
+        {
+          id: 4,
+          column: 'deluxe',
+          filterValue: 'true',
+          enabled: false
+        }
+      ]
     }
   ]
 };

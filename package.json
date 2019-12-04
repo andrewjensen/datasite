@@ -42,6 +42,7 @@
     "typescript": "3.7.2",
     "uuid": "^3.3.3"
   },
+  "homepage": ".",
   "eslintConfig": {
     "extends": "react-app"
   },

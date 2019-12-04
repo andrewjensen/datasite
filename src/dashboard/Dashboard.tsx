@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
 export default Dashboard;
 
 async function fetchDataset(datasetId: string): Promise<Dataset> {
-  const url = `/dataset-${datasetId}.json`;
+  const url = `dataset-${datasetId}.json`;
   if (process.env.NODE_ENV !== 'development') {
     return fetch(url)
       .then(response => response.json())

@@ -4,7 +4,7 @@ import ManifestContext from '../state/ManifestContext';
 import { Manifest } from '../interfaces';
 import MOCK_MANIFEST from './MockManifest';
 
-const MANIFEST_URL = '/datasite.manifest.json';
+const MANIFEST_URL = 'datasite.manifest.json';
 
 const ManifestProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);

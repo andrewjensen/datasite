@@ -32,7 +32,7 @@ export default ManifestProvider;
 
 async function fetchManifest(): Promise<Manifest> {
   if (process.env.NODE_ENV !== 'development') {
-    return fetch(MANIFEST_URL)
+    return fetch(MANIFEST_URL, { cache: 'no-store' })
       .then(response => response.json())
       .then(json => {
         if (isManifest(json)) {

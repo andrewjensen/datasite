@@ -46,7 +46,7 @@ export default Dashboard;
 async function fetchDataset(datasetId: string): Promise<Dataset> {
   const url = `dataset-${datasetId}.json`;
   if (process.env.NODE_ENV !== 'development') {
-    return fetch(url)
+    return fetch(url, { cache: 'no-store' })
       .then(response => response.json())
       .then(json => {
         if (isDataset(json)) {

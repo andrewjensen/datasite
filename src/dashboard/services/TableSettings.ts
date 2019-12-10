@@ -59,5 +59,15 @@ function filterIncludesRow(row: DataRow, filter: FilterSetting): boolean {
   const columnRawValue = row.cells[filter.column];
   const columnValue = printValue(columnRawValue);
 
-  return (columnValue.indexOf(filter.filterValue) !== -1);
+  switch (filter.type) {
+    case 'contains':
+      return (columnValue.indexOf(filter.filterValue) !== -1);
+    case 'equals':
+      return (columnValue === filter.filterValue);
+    case 'regex':
+      const regex = new RegExp(filter.filterValue);
+      return !!columnValue.match(regex);
+    default:
+      throw new Error('Unreachable');
+  }
 };

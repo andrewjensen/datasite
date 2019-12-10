@@ -50,5 +50,15 @@ const IconContainer = styled.div`
 `;
 
 function getPillLabel(filter: FilterSetting) {
-  return `${filter.column} =~ "${filter.filterValue}"`;
+  const { column, type, filterValue } = filter;
+  switch (type) {
+    case 'contains':
+      return `${column} =~ "${filterValue}"`;
+    case 'equals':
+      return `${column} = "${filterValue}"`;
+    case 'regex':
+        return `${column} = /${filterValue}/`;
+    default:
+      throw new Error('Unreachable');
+  }
 }

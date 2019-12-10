@@ -14,9 +14,12 @@ export interface DataRow {
   }
 }
 
+export type FilterType = 'contains' | 'regex' | 'equals';
+
 export interface FilterSetting {
-  id: number,
-  column: string,
+  id: number
+  column: string
+  type: FilterType
   filterValue: string
   enabled: boolean
 }

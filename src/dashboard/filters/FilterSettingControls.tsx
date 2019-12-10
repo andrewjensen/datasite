@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { FilterSetting, DataHeader } from '../interfaces';
+import { FilterSetting, DataHeader, FilterType } from '../interfaces';
 
 interface FilterProps {
   filter: FilterSetting
@@ -16,6 +16,21 @@ interface FilterProps {
   onEdit: (filter: FilterSetting) => void
   onDelete: () => void
 }
+
+const FILTER_TYPES: { type: FilterType, label: string }[] = [
+  {
+    type: 'contains',
+    label: 'contains'
+  },
+  {
+    type: 'equals',
+    label: 'equals'
+  },
+  {
+    type: 'regex',
+    label: 'matches regex'
+  }
+];
 
 const FilterSettingControls: React.FC<FilterProps> = ({
   filter,
@@ -28,6 +43,13 @@ const FilterSettingControls: React.FC<FilterProps> = ({
     onEdit(({
       ...filter,
       column
+    }));
+  }
+
+  function setType(type: FilterType) {
+    onEdit(({
+      ...filter,
+      type
     }));
   }
 
@@ -45,7 +67,7 @@ const FilterSettingControls: React.FC<FilterProps> = ({
         <FormControl>
           <InputLabel>Column</InputLabel>
           <Select
-            style={{width: 150}}
+            style={{width: 100}}
             value={filter.column}
             onChange={event => setColumn(event.target.value as string)}
           >
@@ -61,12 +83,29 @@ const FilterSettingControls: React.FC<FilterProps> = ({
 
       <ControlContainer>
         <FormControl>
+          <InputLabel>Type</InputLabel>
+          <Select
+            style={{width: 130}}
+            value={filter.type}
+            onChange={event => setType(event.target.value as FilterType)}
+          >
+            {FILTER_TYPES.map(filterType => (
+              <MenuItem
+                key={filterType.type}
+                value={filterType.type}
+              >{filterType.label}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </ControlContainer>
+
+      <ControlContainer>
+        <FormControl>
           <TextField
             style={{width: 150, marginTop: 0}}
             margin="normal"
-            label="Contains"
+            label="Value"
             value={filter.filterValue}
-            // placeholder="Hello world"
             InputLabelProps={{
               shrink: true,
             }}

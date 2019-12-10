@@ -55,24 +55,28 @@ Test two three
         {
           id: 1,
           column: 'color',
+          type: 'equals',
           filterValue: 'blue',
           enabled: false
         },
         {
           id: 2,
           column: 'color',
+          type: 'equals',
           filterValue: 'red',
           enabled: false
         },
         {
           id: 3,
           column: 'shape',
+          type: 'equals',
           filterValue: 'circle',
           enabled: false
         },
         {
           id: 4,
           column: 'deluxe',
+          type: 'equals',
           filterValue: 'true',
           enabled: false
         }

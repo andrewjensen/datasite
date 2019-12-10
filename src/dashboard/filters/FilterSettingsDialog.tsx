@@ -44,6 +44,7 @@ const FilterSettingsDialog: React.FC<Props> = ({
     const newFilter: FilterSetting = {
       id,
       column: headers[0].id,
+      type: 'contains',
       filterValue: '',
       enabled: false
     };

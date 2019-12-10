@@ -42,11 +42,12 @@ const SAMPLE_DATA: DataRow[] = [
 ];
 
 describe('applyFilters', () => {
-  it('should filter rows by a search input', () =>  {
+  it('should filter rows based on a "contains" filter type', () =>  {
     const filters: FilterSetting[] = [
       {
         id: 1,
         column: 'name',
+        type: 'contains',
         filterValue: 'Menu',
         enabled: true
       }
@@ -72,17 +73,64 @@ describe('applyFilters', () => {
     ]);
   });
 
+  it('should filter rows based on an "equals" filter type', () => {
+    const filters: FilterSetting[] = [
+      {
+        id: 1,
+        column: 'name',
+        type: 'equals',
+        filterValue: 'Menu',
+        enabled: true
+      }
+    ];
+    const result = applyFilters(SAMPLE_DATA, filters);
+    expect(result).toEqual([]);
+  });
+
+  it('should filter rows based on a "regex" filter type', () => {
+    const filters: FilterSetting[] = [
+      {
+        id: 1,
+        column: 'name',
+        type: 'regex',
+        filterValue: '(interface|Query)',
+        enabled: true
+      }
+    ];
+    const result = applyFilters(SAMPLE_DATA, filters);
+    expect(result).toEqual([
+      {
+        id: './widget/interfaces.js',
+        cells: {
+          name: './widget/interfaces.js',
+          loc: 86,
+          hasFullLodashImport: false
+        }
+      },
+      {
+        id: './users/queries/currentUserQuery.js',
+        cells: {
+          name: './users/queries/currentUserQuery.js',
+          loc: 27,
+          hasFullLodashImport: false
+        }
+      }
+    ]);
+  });
+
   it('should apply multiple filters', () => {
     const filters: FilterSetting[] = [
       {
         id: 1,
         column: 'name',
+        type: 'contains',
         filterValue: 'Menu',
         enabled: true
       },
       {
         id: 1,
         column: 'hasFullLodashImport',
+        type: 'contains',
         filterValue: 'true',
         enabled: true
       }

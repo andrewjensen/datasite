@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -13,6 +13,7 @@ import {
   OrderSetting,
   SortDirection
 } from './interfaces';
+import ColumnFilterPopover from './filters/ColumnFilterPopover';
 
 interface HeadProps {
   headers: DataHeader[]
@@ -128,11 +129,24 @@ interface FilterButtonProps {
 
 const FilterButton: React.FC<FilterButtonProps> = ({
   active
-}) => (
-  <IconButton
-    color={active ? 'primary' : undefined}
-    size="small"
-  >
-    <FilterListIcon fontSize="inherit" />
-  </IconButton>
-);
+}) => {
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  return (
+    <>
+      <IconButton
+        color={active ? 'primary' : undefined}
+        size="small"
+        ref={el => setAnchorEl(el)}
+        onClick={() => setPopoverOpen(!popoverOpen)}
+      >
+        <FilterListIcon fontSize="inherit" />
+      </IconButton>
+      <ColumnFilterPopover
+        open={popoverOpen}
+        onClose={() => setPopoverOpen(false)}
+        anchorEl={anchorEl}
+      />
+    </>
+  )
+};

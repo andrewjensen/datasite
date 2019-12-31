@@ -7,6 +7,8 @@ import FilterPill from './FilterPill';
 import FilterSettingsDialog from './FilterSettingsDialog';
 import FilterContext from './FilterContext';
 
+const ENABLE_SAVED_FILTERS = false;
+
 interface Props {
   displayedRowCount: number
   totalRowCount: number
@@ -30,27 +32,29 @@ const FilterControlPanel: React.FC<Props> = ({
         />
       )}
 
-      <FilterSection>
-        <PillsContainer>
-          {filters.map(filter => (
-            <FilterPill
-              key={filter.id}
-              filter={filter}
-              onToggle={() => onToggleFilter(filter.id)}
-            ></FilterPill>
-          ))}
-        </PillsContainer>
-        <ControlsContainer>
+      {ENABLE_SAVED_FILTERS && (
+        <FilterSection>
+          <PillsContainer>
+            {filters.map(filter => (
+              <FilterPill
+                key={filter.id}
+                filter={filter}
+                onToggle={() => onToggleFilter(filter.id)}
+              ></FilterPill>
+            ))}
+          </PillsContainer>
+          <ControlsContainer>
 
-          <Button
-            variant="contained"
-            color="default"
-            startIcon={<FilterListIcon />}
-            onClick={() => setIsModalOpen(true)}
-          >Edit Filters</Button>
+            <Button
+              variant="contained"
+              color="default"
+              startIcon={<FilterListIcon />}
+              onClick={() => setIsModalOpen(true)}
+            >Edit Filters</Button>
 
-        </ControlsContainer>
-      </FilterSection>
+          </ControlsContainer>
+        </FilterSection>
+      )}
 
       <Summary>
         {getSummaryText(displayedRowCount, totalRowCount)}

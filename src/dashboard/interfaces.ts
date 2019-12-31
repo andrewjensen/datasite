@@ -22,6 +22,7 @@ export interface FilterSetting {
   type: FilterType
   filterValue: string
   enabled: boolean
+  isAdHoc?: boolean
 }
 
 export interface OrderSetting {

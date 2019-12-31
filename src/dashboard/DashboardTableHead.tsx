@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -14,6 +14,8 @@ import {
   SortDirection
 } from './interfaces';
 import ColumnFilterPopover from './filters/ColumnFilterPopover';
+import FilterContext from './filters/FilterContext';
+import { getAdHocFilter } from './filters/helpers';
 
 interface HeadProps {
   headers: DataHeader[]
@@ -52,32 +54,39 @@ const DashboardTableHeadCell: React.FC<HeadCellProps> = ({
   header,
   orderSetting,
   onChangeOrderSetting
-}) => (
-  <TableCell>
-    <HeaderContent>
-      <HeaderTitle>
-        {header.title}
-      </HeaderTitle>
+}) => {
+  const { filters } = useContext(FilterContext);
 
-      <HeaderControls>
-        <OrderButton
-          direction={orderSetting.column === header.id ? orderSetting.direction : null}
-          onSetDirection={
-            (direction: SortDirection) =>
-              onChangeOrderSetting({
-                column: header.id,
-                direction
-              })
-          }
-        />
+  const hasFilter = !!getAdHocFilter(header.id, filters);
 
-        <FilterButton
-          active={false}
-        />
-      </HeaderControls>
-    </HeaderContent>
-  </TableCell>
-);
+  return (
+    <TableCell>
+      <HeaderContent>
+        <HeaderTitle>
+          {header.title}
+        </HeaderTitle>
+
+        <HeaderControls>
+          <OrderButton
+            direction={orderSetting.column === header.id ? orderSetting.direction : null}
+            onSetDirection={
+              (direction: SortDirection) =>
+                onChangeOrderSetting({
+                  column: header.id,
+                  direction
+                })
+            }
+          />
+
+          <FilterButton
+            column={header.id}
+            active={hasFilter}
+          />
+        </HeaderControls>
+      </HeaderContent>
+    </TableCell>
+  );
+};
 
 const HeaderContent = styled.div`
   display: flex;
@@ -124,10 +133,12 @@ function getNextDirection(currentDirection: SortDirection | null): SortDirection
 }
 
 interface FilterButtonProps {
+  column: string
   active: boolean
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
+  column,
   active
 }) => {
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
@@ -143,6 +154,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         <FilterListIcon fontSize="inherit" />
       </IconButton>
       <ColumnFilterPopover
+        column={column}
         open={popoverOpen}
         onClose={() => setPopoverOpen(false)}
         anchorEl={anchorEl}

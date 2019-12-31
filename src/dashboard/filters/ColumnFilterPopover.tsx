@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
@@ -11,42 +11,93 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { FILTER_TYPES } from './constants';
 import {
   FilterSetting,
   FilterType
 } from '../interfaces';
+import { FILTER_TYPES } from './constants';
+import FilterContext from './FilterContext';
+import { getAdHocFilter, getNextFilterId } from './helpers';
 
 interface ColumnFilterPopoverProps {
+  column: string
   open: boolean
   onClose: () => void
   anchorEl: Element | null
 }
 
 const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
+  column,
   open,
   onClose,
   anchorEl
 }) => {
-  const filter: FilterSetting = {
-    id: 0,
-    column: '',
-    type: 'contains',
-    filterValue: '',
-    enabled: true
-  };
+  const { filters, onSetFilters } = useContext(FilterContext);
+
+  const relatedFilter = getAdHocFilter(column, filters);
+  const [currentFilter, setCurrentFilter] = useState<FilterSetting>(createCurrentFilter(relatedFilter));
+
+  function createCurrentFilter(relatedFilter: FilterSetting | null): FilterSetting {
+    if (relatedFilter) {
+      return {
+        ...relatedFilter
+      };
+    } else {
+      const newFilter: FilterSetting = {
+        id: -1,
+        column: column,
+        type: 'contains',
+        filterValue: '',
+        enabled: true,
+        isAdHoc: true
+      };
+      return newFilter;
+    }
+  }
 
   function onClickApply() {
-    // TODO: implement
+    if (currentFilter.id === -1) {
+      // Add a new filter
+      const savedFilter = {
+        ...currentFilter,
+        id: getNextFilterId(filters)
+      };
+      onSetFilters([...filters, savedFilter]);
+      setCurrentFilter(savedFilter);
+    } else {
+      // Edit the existing filter
+      onSetFilters(
+        filters.map(filter =>
+          filter.id === currentFilter.id
+            ? currentFilter
+            : filter
+        )
+      );
+    }
+
+    onClose();
+  }
+
+  function onClickDelete() {
+    onSetFilters(
+      filters.filter(filterSetting => filterSetting.id !== currentFilter.id)
+    );
+    setCurrentFilter(createCurrentFilter(null));
     onClose();
   }
 
   function setType(type: FilterType) {
-    // TODO: implement
+    setCurrentFilter({
+      ...currentFilter,
+      type: type
+    });
   }
 
   function setFilterValue(value: string) {
-    // TODO: implement
+    setCurrentFilter({
+      ...currentFilter,
+      filterValue: value
+    });
   }
 
   return (
@@ -72,7 +123,7 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
               <InputLabel>Type</InputLabel>
               <Select
                 style={{width: 200}}
-                value={filter.type}
+                value={currentFilter.type}
                 onChange={event => setType(event.target.value as FilterType)}
               >
                 {FILTER_TYPES.map(filterType => (
@@ -91,7 +142,7 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
                 style={{width: 200, marginTop: 0}}
                 margin="normal"
                 label="Value"
-                value={filter.filterValue}
+                value={currentFilter.filterValue}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -102,15 +153,17 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
         </PopoverBody>
 
         <PopoverActions>
-          <SecondaryAction>
-            <IconButton
-              color="secondary"
-              size="small"
-              onClick={() => {}}
-            >
-              <DeleteIcon fontSize="inherit" />
-            </IconButton>
-          </SecondaryAction>
+          {currentFilter.id !== -1 && (
+            <SecondaryAction>
+              <IconButton
+                color="secondary"
+                size="small"
+                onClick={onClickDelete}
+              >
+                <DeleteIcon fontSize="inherit" />
+              </IconButton>
+            </SecondaryAction>
+          )}
           <PrimaryActions>
             <Button
               size="small"

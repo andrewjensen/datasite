@@ -3,6 +3,19 @@ import styled from 'styled-components';
 import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+import { FILTER_TYPES } from './constants';
+import {
+  FilterSetting,
+  FilterType
+} from '../interfaces';
 
 interface ColumnFilterPopoverProps {
   open: boolean
@@ -15,9 +28,25 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
   onClose,
   anchorEl
 }) => {
+  const filter: FilterSetting = {
+    id: 0,
+    column: '',
+    type: 'contains',
+    filterValue: '',
+    enabled: true
+  };
+
   function onClickApply() {
     // TODO: implement
     onClose();
+  }
+
+  function setType(type: FilterType) {
+    // TODO: implement
+  }
+
+  function setFilterValue(value: string) {
+    // TODO: implement
   }
 
   return (
@@ -35,10 +64,54 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
       }}
     >
       <Paper>
-        <Container>
-          <div>Apply filters</div>
-          <div>[input]</div>
-          <div>
+        <PopoverBody>
+          <PopoverTitle>Apply filter</PopoverTitle>
+
+          <ControlContainer>
+            <FormControl>
+              <InputLabel>Type</InputLabel>
+              <Select
+                style={{width: 200}}
+                value={filter.type}
+                onChange={event => setType(event.target.value as FilterType)}
+              >
+                {FILTER_TYPES.map(filterType => (
+                  <MenuItem
+                    key={filterType.type}
+                    value={filterType.type}
+                  >{filterType.label}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </ControlContainer>
+
+          <ControlContainer>
+            <FormControl>
+              <TextField
+                style={{width: 200, marginTop: 0}}
+                margin="normal"
+                label="Value"
+                value={filter.filterValue}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={event => setFilterValue(event.target.value)}
+              />
+            </FormControl>
+          </ControlContainer>
+        </PopoverBody>
+
+        <PopoverActions>
+          <SecondaryAction>
+            <IconButton
+              color="secondary"
+              size="small"
+              onClick={() => {}}
+            >
+              <DeleteIcon fontSize="inherit" />
+            </IconButton>
+          </SecondaryAction>
+          <PrimaryActions>
             <Button
               size="small"
               color="primary"
@@ -54,8 +127,8 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
             >
               Apply
             </Button>
-          </div>
-        </Container>
+          </PrimaryActions>
+        </PopoverActions>
       </Paper>
     </Popover>
   )
@@ -63,6 +136,33 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
 
 export default ColumnFilterPopover;
 
-const Container = styled.div`
+const PopoverBody = styled.div`
   padding: 0.5rem 1rem;
+`;
+
+const PopoverActions = styled.div`
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #ccc;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const PrimaryActions = styled.div`
+  flex-grow: 1;
+  text-align: right;
+`;
+
+const SecondaryAction = styled.div`
+`;
+
+const PopoverTitle = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 1rem;
+  padding: 0;
+`;
+
+const ControlContainer = styled.div`
+  margin: 1rem 0;
 `;

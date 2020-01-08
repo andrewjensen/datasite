@@ -2,6 +2,7 @@ import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -39,6 +40,12 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
     }
   }
 
+  const searchFilteredValues = useMemo(() => {
+    return searchValue === ''
+      ? columnValues
+      : columnValues.filter(value => printValue(value).indexOf(searchValue) !== -1);
+  }, [columnValues, searchValue]);
+
   return (
     <Container>
       <SearchBar
@@ -46,7 +53,7 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
         onSetValue={setSearchValue}
       />
       <ListContainer>
-        {columnValues.map(value => (
+        {searchFilteredValues.map(value => (
           <ValueListItem
             key={`${value}${typeof value}`}
             value={value}
@@ -55,6 +62,7 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
           />
         ))}
       </ListContainer>
+      <Summary>Selected: {selectedValues.length}</Summary>
     </Container>
   );
 }
@@ -65,8 +73,16 @@ const Container = styled.div`
 `;
 
 const ListContainer = styled.div`
+  margin: 1rem 0;
+  border: 1px solid #ccc;
   max-height: 10rem;
   overflow: auto;
+`;
+
+const Summary = styled.div`
+  margin: 1rem 0;
+  font-size: 12px;
+  text-align: right;
 `;
 
 interface SearchBarProps {
@@ -104,16 +120,24 @@ const ValueListItem: React.FC<ValueListItemProps> = ({
   onToggle
 }) => (
   <ValueListItemContainer>
-    <Checkbox
-      checked={checked}
-      size="small"
-      value="small"
-      onChange={(event) => onToggle(event.target.checked)}
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={checked}
+          size="small"
+          onChange={(event) => onToggle(event.target.checked)}
+        />
+      }
+      label={printValue(value)}
     />
-    {printValue(value)}
   </ValueListItemContainer>
 );
 
 const ValueListItemContainer = styled.div`
   border-bottom: 1px solid #ccc;
+  padding: 0 1rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;

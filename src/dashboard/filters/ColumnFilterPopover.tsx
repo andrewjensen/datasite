@@ -13,7 +13,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
   FilterSetting,
-  FilterType
+  FilterType,
+  Printable
 } from '../interfaces';
 import { FILTER_TYPES } from './constants';
 import FilterContext from './FilterContext';
@@ -101,6 +102,13 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
     });
   }
 
+  function setFilterItemValues(values: Printable[]) {
+    setCurrentFilter({
+      ...currentFilter,
+      filterItemValues: values
+    });
+  }
+
   return (
     <Popover
       open={open}
@@ -141,6 +149,8 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
             <ControlContainer>
               <EqualsListFilterSelect
                 column={column}
+                selectedValues={currentFilter.filterItemValues || []}
+                onSelectValues={selectedValues => setFilterItemValues(selectedValues)}
               />
             </ControlContainer>
           ) : (

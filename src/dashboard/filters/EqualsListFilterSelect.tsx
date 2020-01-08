@@ -13,15 +13,31 @@ import DatasetContext from '../../common/state/DatasetContext';
 import { getColumnValues } from '../services/TableSettings';
 
 interface EqualsListFilterSelectProps {
-  column: string
+  column: string,
+  selectedValues: Printable[],
+  onSelectValues: (values: Printable[]) => void
 }
 
 const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
-  column
+  column,
+  selectedValues,
+  onSelectValues
 }) => {
   const { dataset } = useContext(DatasetContext);
   const columnValues: Printable[] = useMemo(() => getColumnValues(dataset!.rows, column), [dataset, column]);
   const [searchValue, setSearchValue] = useState<string>('');
+
+  function isValueSelected(value: Printable): boolean {
+    return selectedValues.indexOf(value) !== -1;
+  }
+
+  function setValueSelected(value: Printable, isChecked: boolean) {
+    if (isChecked) {
+      onSelectValues([...selectedValues, value]);
+    } else {
+      onSelectValues(selectedValues.filter(selectedValue => selectedValue !== value));
+    }
+  }
 
   return (
     <Container>
@@ -34,7 +50,8 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
           <ValueListItem
             key={`${value}${typeof value}`}
             value={value}
-            checked={true}
+            checked={isValueSelected(value)}
+            onToggle={(isChecked: boolean) => setValueSelected(value, isChecked)}
           />
         ))}
       </ListContainer>
@@ -78,18 +95,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
 interface ValueListItemProps {
   value: Printable
   checked: boolean
+  onToggle: (isChecked: boolean) => void
 }
 
 const ValueListItem: React.FC<ValueListItemProps> = ({
   value,
-  checked
+  checked,
+  onToggle
 }) => (
   <ValueListItemContainer>
     <Checkbox
       checked={checked}
       size="small"
       value="small"
-      onChange={() => {}}
+      onChange={(event) => onToggle(event.target.checked)}
     />
     {printValue(value)}
   </ValueListItemContainer>

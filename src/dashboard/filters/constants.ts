@@ -4,15 +4,19 @@ import {
 
 export const FILTER_TYPES: { type: FilterType, label: string }[] = [
   {
-    type: 'contains',
-    label: 'contains'
+    type: 'equalsList',
+    label: 'equals values'
   },
   {
     type: 'equals',
-    label: 'equals'
+    label: 'equals the string'
+  },
+  {
+    type: 'contains',
+    label: 'contains the string'
   },
   {
     type: 'regex',
     label: 'matches regex'
-  }
+  },
 ];

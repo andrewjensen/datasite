@@ -6,6 +6,7 @@ import DashboardView from './DashboardView';
 import { Dataset } from '../common/interfaces';
 import { MOCK_DATASET } from './MockData';
 import ManifestContext from '../common/state/ManifestContext';
+import DatasetContext from '../common/state/DatasetContext';
 
 const Dashboard: React.FC = () => {
   const { dashboardSlug } = useParams();
@@ -25,12 +26,18 @@ const Dashboard: React.FC = () => {
     }
   }, [dashboard]);
 
+  const context = {
+    dataset,
+    loading: !dataset
+  };
+
   if (dataset && dashboard) {
     return (
-      <DashboardView
-        dashboard={dashboard}
-        dataset={dataset}
-      />
+      <DatasetContext.Provider value={context}>
+        <DashboardView
+          dashboard={dashboard}
+        />
+      </DatasetContext.Provider>
     );
   } else {
     return (

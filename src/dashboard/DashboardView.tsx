@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
 
 import { applyTableSettingsAsync } from './services/TableSettings';
 import DashboardTable from './DashboardTable';
 import FilterControlPanel from './filters/FilterControlPanel';
 import FilterContext from './filters/FilterContext';
-import { Dataset, ManifestDashboard } from '../common/interfaces';
+import { ManifestDashboard } from '../common/interfaces';
 import {
   DataRow,
   FilterSetting,
   OrderSetting
 } from './interfaces';
 import MarkdownContent from '../common/components/MarkdownContent';
+import DatasetContext from '../common/state/DatasetContext';
 
 interface Props {
   dashboard: ManifestDashboard
-  dataset: Dataset
 }
 
 const EMPTY_ORDER_SETTING: OrderSetting = {
@@ -24,10 +24,10 @@ const EMPTY_ORDER_SETTING: OrderSetting = {
 };
 
 const DashboardView: React.FC<Props> = ({
-  dashboard,
-  dataset
+  dashboard
 }) => {
-  const allRows = dataset.rows;
+  const { dataset } = useContext(DatasetContext);
+  const allRows = dataset!.rows;
 
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
@@ -80,14 +80,14 @@ const DashboardView: React.FC<Props> = ({
           <FilterControlPanel
             displayedRowCount={rows.length}
             totalRowCount={allRows.length}
-            headers={dataset.headers}
+            headers={dataset!.headers}
           />
         </InnerItem>
 
         <TableContainer>
           <DashboardTable
             isLoading={isTableLoading}
-            headers={dataset.headers}
+            headers={dataset!.headers}
             rows={rows}
             orderSetting={orderSetting}
             onChangeOrderSetting={updateOrdering}

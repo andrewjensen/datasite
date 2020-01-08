@@ -14,13 +14,14 @@ export interface DataRow {
   }
 }
 
-export type FilterType = 'contains' | 'regex' | 'equals';
+export type FilterType = 'contains' | 'regex' | 'equals' | 'equalsList';
 
 export interface FilterSetting {
   id: number
   column: string
   type: FilterType
-  filterValue: string
+  filterValue?: string
+  filterItemValues?: Printable[]
   enabled: boolean
   isAdHoc?: boolean
 }

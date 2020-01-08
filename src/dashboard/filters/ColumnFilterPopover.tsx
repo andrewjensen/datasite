@@ -18,6 +18,7 @@ import {
 import { FILTER_TYPES } from './constants';
 import FilterContext from './FilterContext';
 import { getAdHocFilter, getNextFilterId } from './helpers';
+import EqualsListFilterSelect from './EqualsListFilterSelect';
 
 interface ColumnFilterPopoverProps {
   column: string
@@ -46,8 +47,8 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
       const newFilter: FilterSetting = {
         id: -1,
         column: column,
-        type: 'contains',
-        filterValue: '',
+        type: 'equalsList',
+        filterItemValues: [],
         enabled: true,
         isAdHoc: true
       };
@@ -136,20 +137,28 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
             </FormControl>
           </ControlContainer>
 
-          <ControlContainer>
-            <FormControl>
-              <TextField
-                style={{width: 200, marginTop: 0}}
-                margin="normal"
-                label="Value"
-                value={currentFilter.filterValue}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={event => setFilterValue(event.target.value)}
+          {currentFilter.type === 'equalsList' ? (
+            <ControlContainer>
+              <EqualsListFilterSelect
+                column={column}
               />
-            </FormControl>
-          </ControlContainer>
+            </ControlContainer>
+          ) : (
+            <ControlContainer>
+              <FormControl>
+                <TextField
+                  style={{width: 200, marginTop: 0}}
+                  margin="normal"
+                  label="Value"
+                  value={currentFilter.filterValue}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onChange={event => setFilterValue(event.target.value)}
+                />
+              </FormControl>
+            </ControlContainer>
+          )}
         </PopoverBody>
 
         <PopoverActions>

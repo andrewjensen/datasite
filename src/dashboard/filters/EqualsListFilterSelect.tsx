@@ -1,8 +1,9 @@
 import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -13,10 +14,17 @@ import { printValue } from '../services/Printable';
 import DatasetContext from '../../common/state/DatasetContext';
 import { getColumnValues } from '../services/TableSettings';
 
+const LIST_ITEM_HEIGHT = 42;
+
 interface EqualsListFilterSelectProps {
   column: string,
   selectedValues: Printable[],
   onSelectValues: (values: Printable[]) => void
+}
+
+interface RowProps {
+  index: number
+  style: any
 }
 
 const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
@@ -40,11 +48,24 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
     }
   }
 
-  const searchFilteredValues = useMemo(() => {
+  const searchFilteredValues: Printable[] = useMemo(() => {
     return searchValue === ''
       ? columnValues
       : columnValues.filter(value => printValue(value).indexOf(searchValue) !== -1);
   }, [columnValues, searchValue]);
+
+  const Row: React.FC<RowProps> = ({ index, style }) => {
+    const value = searchFilteredValues[index];
+    return (
+      <div style={style}>
+        <ValueListItem
+          value={value}
+          checked={isValueSelected(value)}
+          onToggle={(isChecked: boolean) => setValueSelected(value, isChecked)}
+        />
+      </div>
+    );
+  };
 
   return (
     <Container>
@@ -53,14 +74,18 @@ const EqualsListFilterSelect: React.FC<EqualsListFilterSelectProps> = ({
         onSetValue={setSearchValue}
       />
       <ListContainer>
-        {searchFilteredValues.map(value => (
-          <ValueListItem
-            key={`${value}${typeof value}`}
-            value={value}
-            checked={isValueSelected(value)}
-            onToggle={(isChecked: boolean) => setValueSelected(value, isChecked)}
-          />
-        ))}
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              width={width}
+              height={height}
+              itemCount={searchFilteredValues.length}
+              itemSize={LIST_ITEM_HEIGHT}
+            >
+              {Row}
+            </List>
+          )}
+        </AutoSizer>
       </ListContainer>
       <Summary>Selected: {selectedValues.length}</Summary>
     </Container>
@@ -75,8 +100,7 @@ const Container = styled.div`
 const ListContainer = styled.div`
   margin: 1rem 0;
   border: 1px solid #ccc;
-  max-height: 10rem;
-  overflow: auto;
+  height: 10rem;
 `;
 
 const Summary = styled.div`
@@ -120,24 +144,39 @@ const ValueListItem: React.FC<ValueListItemProps> = ({
   onToggle
 }) => (
   <ValueListItemContainer>
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={checked}
-          size="small"
-          onChange={(event) => onToggle(event.target.checked)}
-        />
-      }
-      label={printValue(value)}
+    <Checkbox
+      checked={checked}
+      size="small"
+      onChange={(event) => onToggle(event.target.checked)}
     />
+    <ValueListItemLabel
+      title={printValue(value)}
+      onClick={() => onToggle(!checked)}
+    >
+      {printValue(value)}
+    </ValueListItemLabel>
   </ValueListItemContainer>
 );
 
 const ValueListItemContainer = styled.div`
   border-bottom: 1px solid #ccc;
-  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 
   &:last-child {
     border-bottom: none;
   }
+`;
+
+const ValueListItemLabel = styled.div`
+  flex-grow: 1;
+  padding: 0 1rem 0 0;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
 `;

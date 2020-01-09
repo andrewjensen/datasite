@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 
 import { FilterSetting, DataHeader } from '../interfaces';
+import { getNextFilterId } from './helpers';
 import FilterSettingControls from './FilterSettingControls';
 import FilterContext from './FilterContext';
 
@@ -40,7 +41,7 @@ const FilterSettingsDialog: React.FC<Props> = ({
   }
 
   function addNewFilter() {
-    const id = getNextId(currentFilters);
+    const id = getNextFilterId(currentFilters);
     const newFilter: FilterSetting = {
       id,
       column: headers[0].id,
@@ -112,13 +113,3 @@ export default FilterSettingsDialog;
 const AddFilterContainer = styled.div`
   margin-top: 1rem;
 `;
-
-function getNextId(currentFilters: FilterSetting[]): number {
-  let maxId = 0;
-  for (let filter of currentFilters) {
-    if (filter.id > maxId) {
-      maxId = filter.id;
-    }
-  }
-  return maxId + 1;
-}

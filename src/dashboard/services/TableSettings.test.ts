@@ -3,7 +3,8 @@ import {
 } from '../interfaces';
 import {
   applyFilters,
-  applyOrdering
+  applyOrdering,
+  getColumnValues
 } from './TableSettings';
 
 const SAMPLE_DATA: DataRow[] = [
@@ -113,6 +114,40 @@ describe('applyFilters', () => {
           name: './users/queries/currentUserQuery.js',
           loc: 27,
           hasFullLodashImport: false
+        }
+      }
+    ]);
+  });
+
+  it('should filter rows based on an "equalsList" filter type', () => {
+    const filters: FilterSetting[] = [
+      {
+        id: 1,
+        column: 'name',
+        type: 'equalsList',
+        filterItemValues: [
+          './users/queries/currentUserQuery.js',
+          './widget/WidgetMenu.js'
+        ],
+        enabled: true
+      }
+    ];
+    const result = applyFilters(SAMPLE_DATA, filters);
+    expect(result).toEqual([
+      {
+        id: './users/queries/currentUserQuery.js',
+        cells: {
+          name: './users/queries/currentUserQuery.js',
+          loc: 27,
+          hasFullLodashImport: false
+        }
+      },
+      {
+        id: './widget/WidgetMenu.js',
+        cells: {
+          name: './widget/WidgetMenu.js',
+          loc: 147,
+          hasFullLodashImport: true
         }
       }
     ]);
@@ -315,6 +350,26 @@ describe('applyOrdering', () => {
           hasFullLodashImport: false
         }
       }
+    ]);
+  });
+});
+
+describe('getColumnValues', () => {
+  it('should get values from a string column', () => {
+    const result = getColumnValues(SAMPLE_DATA, 'name');
+    expect(result).toEqual([
+      './users/queries/currentUserQuery.js',
+      './widget/WidgetMenu.js',
+      './widget/WidgetMenuItem.js',
+      './widget/interfaces.js'
+    ]);
+  });
+
+  it('should deduplicate values', () => {
+    const result = getColumnValues(SAMPLE_DATA, 'hasFullLodashImport');
+    expect(result).toEqual([
+      false,
+      true
     ]);
   });
 });

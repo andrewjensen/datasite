@@ -4,9 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import {
   DataHeader,
@@ -14,6 +12,7 @@ import {
   OrderSetting
 } from './interfaces';
 import { printValue } from './services/Printable';
+import DashboardTableHead from './DashboardTableHead';
 
 interface DashboardTableProps {
   isLoading: boolean
@@ -48,23 +47,13 @@ const DashboardTable: React.FC<DashboardTableProps> = ({
         </LoadingOverlay>
       )}
       <Table stickyHeader size="small" aria-label="dashboard table">
-        <TableHead>
-          <TableRow>
-            {headers.map(header => (
-              <TableCell
-                key={header.id}
-              >
-                <TableSortLabel
-                  active={orderSetting.column === header.id}
-                  direction={orderSetting.direction}
-                  onClick={() => onChangeOrderSetting(createNewOrderSetting(header.id, orderSetting))}
-                >
-                  {header.title}
-                </TableSortLabel>
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
+
+        <DashboardTableHead
+          headers={headers}
+          orderSetting={orderSetting}
+          onChangeOrderSetting={onChangeOrderSetting}
+        />
+
         {rows.length > 0
           ? <DashboardTableBody
               rows={rows}
@@ -108,13 +97,6 @@ const DashboardTableBody: React.FC<BodyProps> = React.memo(({
     </TableBody>
   )
 });
-
-function createNewOrderSetting(columnId: string, previous: OrderSetting): OrderSetting {
-  return {
-    column: columnId,
-    direction: (previous.column === columnId && previous.direction === 'asc') ? 'desc' : 'asc'
-  }
-}
 
 const Container = styled(Paper)`
   position: relative;

@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import { FilterSetting, DataHeader, FilterType } from '../interfaces';
+import { FILTER_TYPES } from './constants';
 
 interface FilterProps {
   filter: FilterSetting
@@ -16,21 +17,6 @@ interface FilterProps {
   onEdit: (filter: FilterSetting) => void
   onDelete: () => void
 }
-
-const FILTER_TYPES: { type: FilterType, label: string }[] = [
-  {
-    type: 'contains',
-    label: 'contains'
-  },
-  {
-    type: 'equals',
-    label: 'equals'
-  },
-  {
-    type: 'regex',
-    label: 'matches regex'
-  }
-];
 
 const FilterSettingControls: React.FC<FilterProps> = ({
   filter,

@@ -1,7 +1,8 @@
 import {
   FilterSetting,
   OrderSetting,
-  DataRow
+  DataRow,
+  Printable
 } from '../interfaces';
 import { printValue } from './Printable';
 
@@ -55,18 +56,29 @@ export function applyOrdering(rows: DataRow[], orderSetting: OrderSetting): Data
   }
 }
 
+export function getColumnValues(rows: DataRow[], column: string): Printable[] {
+  const values = new Set<Printable>();
+  for (let row of rows) {
+    const rowValue = row.cells[column];
+    values.add(rowValue);
+  }
+  return Array.from(values).sort();
+}
+
 function filterIncludesRow(row: DataRow, filter: FilterSetting): boolean {
   const columnRawValue = row.cells[filter.column];
   const columnValue = printValue(columnRawValue);
 
   switch (filter.type) {
     case 'contains':
-      return (columnValue.indexOf(filter.filterValue) !== -1);
+      return (columnValue.indexOf(filter.filterValue!) !== -1);
     case 'equals':
       return (columnValue === filter.filterValue);
     case 'regex':
-      const regex = new RegExp(filter.filterValue);
+      const regex = new RegExp(filter.filterValue!);
       return !!columnValue.match(regex);
+    case 'equalsList':
+      return (filter.filterItemValues!.indexOf(columnRawValue) !== -1);
     default:
       throw new Error('Unreachable');
   }

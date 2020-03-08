@@ -75,6 +75,13 @@ module.exports = {
       ]
     },
     {
+      title: 'Another Shapes Dashboard',
+      slug: 'another-shapes-dashboard',
+      description: 'Here is another dashboard with the same shapes dataset!',
+      dataset: 'SHAPES',
+      filters: []
+    },
+    {
       title: 'Org Chart',
       slug: 'org-chart',
       description: 'This shows flattened data about people in an org chart.',

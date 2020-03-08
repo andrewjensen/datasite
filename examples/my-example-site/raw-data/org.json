@@ -1,0 +1,48 @@
+{
+  "org": {
+    "id": 1,
+    "name": "Andrew",
+    "role": "President",
+    "reports": [
+      {
+        "id": 6,
+        "name": "Angela",
+        "role": "VP of Sales",
+        "reports": [
+          {
+            "id": 7,
+            "name": "Aaron",
+            "role": "Sales Rep"
+          },
+          {
+            "id": 3,
+            "name": "Alberto",
+            "role": "Sales Rep"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Allen",
+        "role": "VP of Product",
+        "reports": [
+          {
+            "id": 8,
+            "name": "Alexei",
+            "role": "Product Specialist"
+          },
+          {
+            "id": 4,
+            "name": "Anne",
+            "role": "Product Guru"
+          },
+          {
+            "id": 5,
+            "name": "Arnold",
+            "role": "Product Whisperer"
+          }
+        ]
+      }
+    ]
+  }
+}

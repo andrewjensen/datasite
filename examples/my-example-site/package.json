@@ -1,10 +1,10 @@
 {
-  "name": "datasite-example-shapes",
+  "name": "my-example-site",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build",
+    "start": "npm run build && npm run serve",
     "build": "../../bin/datasite --config ./datasite.config.js",
     "serve": "http-server -p 3500 ./build/",
     "test": "echo \"Error: no test specified\" && exit 1"

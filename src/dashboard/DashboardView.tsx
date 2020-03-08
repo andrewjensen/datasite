@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { applyTableSettingsAsync } from './services/TableSettings';
@@ -27,12 +27,21 @@ const DashboardView: React.FC<Props> = ({
   dashboard
 }) => {
   const { dataset } = useContext(DatasetContext);
-  const allRows = dataset!.rows;
 
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
-  const [rows, setRows] = useState<DataRow[]>(allRows);
+  const [allRows, setAllRows] = useState<DataRow[]>([]);
+  const [visibleRows, setVisibleRows] = useState<DataRow[]>([]);
   const [orderSetting, setOrderSetting] = useState<OrderSetting>(EMPTY_ORDER_SETTING);
+
+  useEffect(() => {
+    if (dataset) {
+      setFilters(dashboard.filters);
+      setAllRows(dataset.rows);
+      setVisibleRows(dataset.rows);
+      setOrderSetting(EMPTY_ORDER_SETTING);
+    }
+  }, [dataset, dashboard]);
 
   function onToggleFilter(id: number) {
     const newFilters = filters
@@ -59,7 +68,7 @@ const DashboardView: React.FC<Props> = ({
     setIsTableLoading(true);
 
     const newData = await applyTableSettingsAsync(allRows, currentFilters, currentOrderSetting);
-    setRows(newData);
+    setVisibleRows(newData);
 
     setIsTableLoading(false);
   }
@@ -78,7 +87,7 @@ const DashboardView: React.FC<Props> = ({
 
         <InnerItem>
           <FilterControlPanel
-            displayedRowCount={rows.length}
+            displayedRowCount={visibleRows.length}
             totalRowCount={allRows.length}
             headers={dataset!.headers}
           />
@@ -88,7 +97,7 @@ const DashboardView: React.FC<Props> = ({
           <DashboardTable
             isLoading={isTableLoading}
             headers={dataset!.headers}
-            rows={rows}
+            rows={visibleRows}
             orderSetting={orderSetting}
             onChangeOrderSetting={updateOrdering}
           />

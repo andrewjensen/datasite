@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import DashboardView from './DashboardView';
-import { Dataset } from '../common/interfaces';
+import { Dataset, ManifestDashboard } from '../common/interfaces';
 import { MOCK_DATASET } from './MockData';
 import ManifestContext from '../common/state/ManifestContext';
 import DatasetContext from '../common/state/DatasetContext';
@@ -11,20 +11,23 @@ import DatasetContext from '../common/state/DatasetContext';
 const Dashboard: React.FC = () => {
   const { dashboardSlug } = useParams();
   const { manifest } = useContext(ManifestContext);
-  const dashboard = manifest
-    ? manifest.dashboards.find(d => d.slug === dashboardSlug) || null
-    : null;
+
+  const [dashboard, setDashboard] = useState<ManifestDashboard | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
 
   useEffect(() => {
-    if (dashboard) {
-      console.log('fetching for dashboard:', dashboard);
-      fetchDataset(dashboard.dataset)
+    const foundDashboard = manifest
+      ? manifest.dashboards.find(d => d.slug === dashboardSlug) || null
+      : null;
+
+    if (foundDashboard) {
+      fetchDataset(foundDashboard.dataset)
         .then(fetchedDataset => {
+          setDashboard(foundDashboard);
           setDataset(fetchedDataset);
         });
     }
-  }, [dashboard]);
+  }, [dashboardSlug, manifest]);
 
   const context = {
     dataset,

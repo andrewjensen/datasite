@@ -4,8 +4,12 @@ const { promisify } = require('util');
 const writeFile = promisify(fs.writeFile);
 const chalk = require('chalk');
 const execa = require('execa');
+const uuidv5 = require('uuid/v5');
 
 const PREBUILT_DIRECTORY = path.resolve(__dirname, '..', '..', 'build');
+
+// Just a UUIDv4, to serve as the namespace for rows, to avoid collisions
+const DATASITE_NAMESPACE = 'b487fdcc-66d9-4f69-8c2c-01bce826d976';
 
 const program = require('commander');
 
@@ -53,7 +57,9 @@ async function processDataset(datasetConfig) {
   const inputPath = resolvePath(datasetConfig.inputFile);
   const inputContents = require(inputPath);
 
-  const rows = datasetConfig.inputToRows(inputContents);
+  const rawRows = datasetConfig.inputToRows(inputContents);
+  const rows = addRowIds(rawRows, datasetConfig.id);
+
   const dataset = {
     id: datasetConfig.id,
     headers: datasetConfig.headers,
@@ -62,6 +68,17 @@ async function processDataset(datasetConfig) {
 
   const outputPath = resolvePath(`build/dataset-${datasetConfig.id}.json`);
   await writeJsonFile(dataset, outputPath);
+}
+
+function addRowIds(rawRows, datasetId) {
+  return rawRows.map((rawRow, idx) => {
+    const idInput = `${datasetId}*row*${idx}`;
+    const rowId = uuidv5(idInput, DATASITE_NAMESPACE);
+    return {
+      id: rowId,
+      cells: rawRow
+    };
+  });
 }
 
 async function createManifestFile(config) {

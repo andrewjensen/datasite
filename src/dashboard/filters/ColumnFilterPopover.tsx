@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Popover from '@material-ui/core/Popover';
 import Paper from '@material-ui/core/Paper';
@@ -28,6 +28,24 @@ interface ColumnFilterPopoverProps {
   anchorEl: Element | null
 }
 
+function createCurrentFilter(column: string, relatedFilter: FilterSetting | null): FilterSetting {
+  if (relatedFilter) {
+    return {
+      ...relatedFilter
+    };
+  } else {
+    const newFilter: FilterSetting = {
+      id: -1,
+      column: column,
+      type: 'equalsList',
+      filterItemValues: [],
+      enabled: true,
+      isAdHoc: true
+    };
+    return newFilter;
+  }
+}
+
 const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
   column,
   open,
@@ -37,25 +55,12 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
   const { filters, onSetFilters } = useContext(FilterContext);
 
   const relatedFilter = getAdHocFilter(column, filters);
-  const [currentFilter, setCurrentFilter] = useState<FilterSetting>(createCurrentFilter(relatedFilter));
+  const [currentFilter, setCurrentFilter] = useState<FilterSetting>(createCurrentFilter(column, relatedFilter));
 
-  function createCurrentFilter(relatedFilter: FilterSetting | null): FilterSetting {
-    if (relatedFilter) {
-      return {
-        ...relatedFilter
-      };
-    } else {
-      const newFilter: FilterSetting = {
-        id: -1,
-        column: column,
-        type: 'equalsList',
-        filterItemValues: [],
-        enabled: true,
-        isAdHoc: true
-      };
-      return newFilter;
-    }
-  }
+  useEffect(() => {
+    const relatedFilter = getAdHocFilter(column, filters);
+    setCurrentFilter(createCurrentFilter(column, relatedFilter));
+  }, [column, filters]);
 
   function onClickApply() {
     if (currentFilter.id === -1) {
@@ -84,7 +89,7 @@ const ColumnFilterPopover: React.FC<ColumnFilterPopoverProps> = ({
     onSetFilters(
       filters.filter(filterSetting => filterSetting.id !== currentFilter.id)
     );
-    setCurrentFilter(createCurrentFilter(null));
+    setCurrentFilter(createCurrentFilter(column, null));
     onClose();
   }
 

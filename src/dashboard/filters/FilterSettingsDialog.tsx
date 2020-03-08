@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,7 +22,12 @@ const FilterSettingsDialog: React.FC<Props> = ({
   onClose
 }) => {
   const { filters, onSetFilters } = useContext(FilterContext);
+
   const [currentFilters, setCurrentFilters] = useState<FilterSetting[]>(filters);
+
+  useEffect(() => {
+    setCurrentFilters(filters);
+  }, [filters]);
 
   function editFilter(editedFilter: FilterSetting) {
     setCurrentFilters(

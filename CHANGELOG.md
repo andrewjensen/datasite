@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.0
+
+- Improvement: Row IDs are now generated internally by the CLI
+- Bug fix: switching from one dashboard to another through the sidebar used to corrupt the state
+
 ## v0.3.0
 
 - Feature: Quick filtering

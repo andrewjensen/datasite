@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.1
+
+- Bug fix: switching from one dashboard to another through the sidebar did not reset filter state
+
 ## v0.4.0
 
 - Improvement: Row IDs are now generated internally by the CLI

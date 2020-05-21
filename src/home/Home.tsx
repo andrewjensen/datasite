@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { Helmet } from 'react-helmet';
 import { Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
@@ -19,6 +20,9 @@ const Home: React.FC = () => {
     return (
       <Container>
         <Content>
+          <Helmet>
+            <title>{manifest.general.title}</title>
+          </Helmet>
 
           <LayoutContainer>
             <SiteTitle>{manifest.general.title}</SiteTitle>

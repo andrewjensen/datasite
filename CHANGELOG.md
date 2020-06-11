@@ -1,31 +1,56 @@
 # Changelog
 
-## Unpublished
+All notable changes to this project will be documented in this file.
 
-- Improvement: Set document title to the datasite and dashboard title
-- Docs: Add instructions to the README
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.4.1
+## Unreleased
 
-- Bug fix: switching from one dashboard to another through the sidebar did not reset filter state
+### Added
 
-## v0.4.0
+- Set document title to the datasite and dashboard title
 
-- Improvement: Row IDs are now generated internally by the CLI
-- Bug fix: switching from one dashboard to another through the sidebar used to corrupt the state
+### Changed
 
-## v0.3.0
+- Add instructions to the README
+- Adopted [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format for this Changelog
 
-- Feature: Quick filtering
-- Improvement: New `equalsList` filter type
+## 0.4.1 - 2020-05-07
 
-## v0.2.x
+### Fixed
 
-- Improvement: New filter types
+- Switching from one dashboard to another through the sidebar did not reset filter state
+
+## 0.4.0 - 2020-05-07
+
+### Changed
+
+- Row IDs are now generated internally by the CLI
+
+### Fixed
+
+- Switching from one dashboard to another through the sidebar used to corrupt the state
+
+## 0.3.0 - 2020-01-08
+
+### Added
+
+- Quick filtering
+- New `equalsList` filter type
+
+## 0.2.0 - 2019-12-09
+
+### Added
+
+- New filter types
   - `equals`
   - `regex`
-- Improvement: Prevent incorrect caching of datasets
 
-## v0.1.x
+### Fixed
 
-- MVP
+- Prevent incorrect caching of datasets
+
+## 0.1.x
+
+MVP

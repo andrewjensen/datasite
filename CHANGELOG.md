@@ -3,6 +3,7 @@
 ## Unpublished
 
 - Improvement: Set document title to the datasite and dashboard title
+- Docs: Add instructions to the README
 
 ## v0.4.1
 

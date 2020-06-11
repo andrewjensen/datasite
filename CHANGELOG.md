@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.5.0 - 2020-06-11
+
 ### Added
 
 - Set document title to the datasite and dashboard title

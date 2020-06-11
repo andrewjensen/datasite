@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { Helmet } from 'react-helmet';
 
 import DashboardView from './DashboardView';
-import { Dataset, ManifestDashboard } from '../common/interfaces';
+import { Dataset, Manifest, ManifestDashboard } from '../common/interfaces';
 import { MOCK_DATASET } from './MockData';
 import ManifestContext from '../common/state/ManifestContext';
 import DatasetContext from '../common/state/DatasetContext';
@@ -37,6 +38,9 @@ const Dashboard: React.FC = () => {
   if (dataset && dashboard) {
     return (
       <DatasetContext.Provider value={context}>
+        <Helmet>
+          <title>{getDocumentTitle(manifest, dashboard)}</title>
+        </Helmet>
         <DashboardView
           dashboard={dashboard}
         />
@@ -67,6 +71,14 @@ async function fetchDataset(datasetId: string): Promise<Dataset> {
       });
   } else {
     return Promise.resolve(MOCK_DATASET);
+  }
+}
+
+function getDocumentTitle(manifest: Manifest | null, dashboard: ManifestDashboard): string {
+  if (manifest) {
+    return `${dashboard.title} | ${manifest.general.title}`;
+  } else {
+    return `${dashboard.title} | Datasite`;
   }
 }
 

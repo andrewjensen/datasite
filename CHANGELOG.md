@@ -1,5 +1,9 @@
 # Changelog
 
+## Unpublished
+
+- Improvement: Set document title to the datasite and dashboard title
+
 ## v0.4.1
 
 - Bug fix: switching from one dashboard to another through the sidebar did not reset filter state

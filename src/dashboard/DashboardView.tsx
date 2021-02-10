@@ -82,7 +82,9 @@ const DashboardView: React.FC<Props> = ({
       <Container>
         <InnerItem>
           <Header>{dashboard.title}</Header>
-          <Description>{dashboard.description}</Description>
+          <DescriptionContainer>
+            <MarkdownContent content={dashboard.description} />
+          </DescriptionContainer>
         </InnerItem>
 
         <InnerItem>
@@ -132,12 +134,6 @@ const Header = styled.h1`
   font-size: 28px;
   font-weight: bold;
 `;
-
-const Description: React.FC = ({ children }) => (
-  <DescriptionContainer>
-    <MarkdownContent>{children}</MarkdownContent>
-  </DescriptionContainer>
-);
 
 const DescriptionContainer = styled.div`
   margin: 0 2rem;

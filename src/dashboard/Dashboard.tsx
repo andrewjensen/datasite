@@ -10,11 +10,16 @@ import ManifestContext from '../common/state/ManifestContext';
 import DatasetContext from '../common/state/DatasetContext';
 
 const Dashboard: React.FC = () => {
-  const { dashboardSlug } = useParams();
+  const urlParams = useParams();
   const { manifest } = useContext(ManifestContext);
 
   const [dashboard, setDashboard] = useState<ManifestDashboard | null>(null);
   const [dataset, setDataset] = useState<Dataset | null>(null);
+
+  const dashboardSlug: string =
+    urlParams.hasOwnProperty('dashboardSlug')
+      ? (urlParams as any).dashboardSlug
+      : null;
 
   useEffect(() => {
     const foundDashboard = manifest

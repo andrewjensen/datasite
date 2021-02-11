@@ -13,6 +13,7 @@ import {
 } from './interfaces';
 import MarkdownContent from '../common/components/MarkdownContent';
 import DatasetContext from '../common/state/DatasetContext';
+import { encodeState } from './urlState';
 
 interface Props {
   dashboard: ManifestDashboard
@@ -52,16 +53,19 @@ const DashboardView: React.FC<Props> = ({
       );
     setFilters(newFilters);
     updateTableData(newFilters, orderSetting);
+    updateUrlState(newFilters, orderSetting);
   }
 
   function onSetFilters(newFilters: FilterSetting[]) {
     setFilters(newFilters);
     updateTableData(newFilters, orderSetting);
+    updateUrlState(newFilters, orderSetting);
   }
 
   function updateOrdering(newOrderSetting: OrderSetting) {
     setOrderSetting(newOrderSetting);
     updateTableData(filters, newOrderSetting);
+    updateUrlState(filters, newOrderSetting);
   }
 
   async function updateTableData(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
@@ -71,6 +75,13 @@ const DashboardView: React.FC<Props> = ({
     setVisibleRows(newData);
 
     setIsTableLoading(false);
+  }
+
+  function updateUrlState(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
+    const encoded = encodeState(currentFilters, currentOrderSetting);
+
+    console.log('encoded:', encoded);
+    // TODO: set as a URL param
   }
 
   return (

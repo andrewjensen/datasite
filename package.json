@@ -17,6 +17,8 @@
     "datasite": "./bin/datasite"
   },
   "dependencies": {
+    "@msgpack/msgpack": "^2.3.0",
+    "base64-js": "^1.5.1",
     "chalk": "^3.0.0",
     "commander": "^4.1.1",
     "execa": "^3.4.0",

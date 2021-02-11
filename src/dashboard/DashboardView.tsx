@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { applyTableSettingsAsync } from './services/TableSettings';
 import DashboardTable from './DashboardTable';
@@ -28,6 +29,9 @@ const DashboardView: React.FC<Props> = ({
   dashboard
 }) => {
   const { dataset } = useContext(DatasetContext);
+  // const urlParams = useParams();
+  const location = useLocation();
+  const history = useHistory();
 
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
@@ -79,9 +83,7 @@ const DashboardView: React.FC<Props> = ({
 
   function updateUrlState(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
     const encoded = encodeState(currentFilters, currentOrderSetting);
-
-    console.log('encoded:', encoded);
-    // TODO: set as a URL param
+    history.replace(`${location.pathname}?state=${encoded}`);
   }
 
   return (

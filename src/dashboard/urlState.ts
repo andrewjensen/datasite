@@ -139,8 +139,12 @@ function isUrlFilter(compactFilter: unknown): compactFilter is UrlFilter {
 }
 
 function isUrlOrderSetting(compactOrderSetting: unknown): compactOrderSetting is UrlOrderSetting {
-  if (typeof compactOrderSetting !== 'object' || compactOrderSetting === null) {
+  if (typeof compactOrderSetting !== 'object') {
     return false;
+  }
+
+  if (compactOrderSetting === null) {
+    return true;
   }
 
   if (!hasOwnProperty(compactOrderSetting, 'col') || typeof compactOrderSetting.col !== 'string') {

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -14,10 +14,23 @@ import {
 } from './interfaces';
 import MarkdownContent from '../common/components/MarkdownContent';
 import DatasetContext from '../common/state/DatasetContext';
-import { encodeState } from './urlState';
+import { encodeState, decodeState } from './urlState';
+import { getNextFilterId } from './filters/helpers';
 
 interface Props {
   dashboard: ManifestDashboard
+}
+
+// TODO: move somewhere
+function mergeFilters(existingFilters: FilterSetting[], newFilters: FilterSetting[]): FilterSetting[] {
+  const nextId = getNextFilterId(existingFilters);
+  const newFiltersWithIds: FilterSetting[] = newFilters
+    .map((filter, idx) => ({
+      ...filter,
+      id: nextId + idx
+    }));
+
+  return [...existingFilters, ...newFiltersWithIds];
 }
 
 const EMPTY_ORDER_SETTING: OrderSetting = {
@@ -29,15 +42,30 @@ const DashboardView: React.FC<Props> = ({
   dashboard
 }) => {
   const { dataset } = useContext(DatasetContext);
-  // const urlParams = useParams();
   const location = useLocation();
   const history = useHistory();
 
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
   const [allRows, setAllRows] = useState<DataRow[]>([]);
   const [visibleRows, setVisibleRows] = useState<DataRow[]>([]);
   const [orderSetting, setOrderSetting] = useState<OrderSetting>(EMPTY_ORDER_SETTING);
+
+  const updateTableData = useCallback(async (currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) => {
+    setIsTableLoading(true);
+
+    // TODO: refactor so allRows is always available
+    const rowsToSet =
+      allRows.length
+        ? allRows
+        : dataset!.rows;
+
+    const newData = await applyTableSettingsAsync(rowsToSet, currentFilters, currentOrderSetting);
+    setVisibleRows(newData);
+
+    setIsTableLoading(false);
+  }, [dataset, allRows, setIsTableLoading, setVisibleRows]);
 
   useEffect(() => {
     if (dataset) {
@@ -47,6 +75,22 @@ const DashboardView: React.FC<Props> = ({
       setOrderSetting(EMPTY_ORDER_SETTING);
     }
   }, [dataset, dashboard]);
+
+  useEffect(() => {
+    if (!isInitialized) {
+      const searchParams = new URLSearchParams(location.search);
+      const state = searchParams.get('state');
+      if (state) {
+        const { filters: decodedFilters, orderSetting } = decodeState(state);
+        const mergedFilters = mergeFilters(filters, decodedFilters);
+
+        setOrderSetting(orderSetting);
+        setFilters(mergedFilters);
+        updateTableData(mergedFilters, orderSetting);
+      }
+      setIsInitialized(true);
+    }
+  }, [location, filters, isInitialized, setIsInitialized, setOrderSetting, updateTableData]);
 
   function onToggleFilter(id: number) {
     const newFilters = filters
@@ -70,15 +114,6 @@ const DashboardView: React.FC<Props> = ({
     setOrderSetting(newOrderSetting);
     updateTableData(filters, newOrderSetting);
     updateUrlState(filters, newOrderSetting);
-  }
-
-  async function updateTableData(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
-    setIsTableLoading(true);
-
-    const newData = await applyTableSettingsAsync(allRows, currentFilters, currentOrderSetting);
-    setVisibleRows(newData);
-
-    setIsTableLoading(false);
   }
 
   function updateUrlState(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {

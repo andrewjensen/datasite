@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Serialize filter and ordering state in the URL
+
+### Changed
+
+- Clearer design for buttons in the dashboard table
+
 ### Fixed
 
 - Updated dependencies in example app

@@ -21,18 +21,6 @@ interface Props {
   dashboard: ManifestDashboard
 }
 
-// TODO: move somewhere
-function mergeFilters(existingFilters: FilterSetting[], newFilters: FilterSetting[]): FilterSetting[] {
-  const nextId = getNextFilterId(existingFilters);
-  const newFiltersWithIds: FilterSetting[] = newFilters
-    .map((filter, idx) => ({
-      ...filter,
-      id: nextId + idx
-    }));
-
-  return [...existingFilters, ...newFiltersWithIds];
-}
-
 const EMPTY_ORDER_SETTING: OrderSetting = {
   column: null,
   direction: 'asc'
@@ -55,7 +43,6 @@ const DashboardView: React.FC<Props> = ({
   const updateTableData = useCallback(async (currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) => {
     setIsTableLoading(true);
 
-    // TODO: refactor so allRows is always available
     const rowsToSet =
       allRows.length
         ? allRows
@@ -186,3 +173,14 @@ const Header = styled.h1`
 const DescriptionContainer = styled.div`
   margin: 0 2rem;
 `;
+
+function mergeFilters(existingFilters: FilterSetting[], newFilters: FilterSetting[]): FilterSetting[] {
+  const nextId = getNextFilterId(existingFilters);
+  const newFiltersWithIds: FilterSetting[] = newFilters
+    .map((filter, idx) => ({
+      ...filter,
+      id: nextId + idx
+    }));
+
+  return [...existingFilters, ...newFiltersWithIds];
+}

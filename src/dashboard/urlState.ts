@@ -1,6 +1,7 @@
 import { encode, decode } from "@msgpack/msgpack";
 import { fromByteArray, toByteArray } from 'base64-js';
 
+import { hasOwnProperty } from '../common/tsHelpers';
 import {
   FilterSetting,
   FilterType,
@@ -180,9 +181,4 @@ function isFilterType(filterType: unknown): filterType is FilterType {
     'equals',
     'equalsList'
   ].includes(filterType);
-}
-
-function hasOwnProperty<X extends {}, Y extends PropertyKey>
-  (obj: X, prop: Y): obj is X & Record<Y, unknown> {
-  return obj.hasOwnProperty(prop)
 }

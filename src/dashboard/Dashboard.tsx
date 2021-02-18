@@ -3,14 +3,20 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 
-import DashboardView from './DashboardView';
+import { hasOwnProperty } from '../common/tsHelpers';
 import { Dataset, Manifest, ManifestDashboard } from '../common/interfaces';
+import DashboardView from './DashboardView';
 import { MOCK_DATASET } from './MockData';
 import ManifestContext from '../common/state/ManifestContext';
 import DatasetContext from '../common/state/DatasetContext';
 
 const Dashboard: React.FC = () => {
-  const { dashboardSlug } = useParams();
+  const urlParams = useParams();
+  const dashboardSlug =
+    hasOwnProperty(urlParams, 'dashboardSlug')
+      ? urlParams.dashboardSlug
+      : null;
+
   const { manifest } = useContext(ManifestContext);
 
   const [dashboard, setDashboard] = useState<ManifestDashboard | null>(null);

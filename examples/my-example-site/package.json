@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "ecstatic": ">=4.1.3",
     "http-server": "^0.12.3"
   }
 }

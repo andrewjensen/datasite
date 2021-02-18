@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -13,6 +12,7 @@ import {
   OrderSetting,
   SortDirection
 } from './interfaces';
+import DashboardTableHeadButton from './DashboardTableHeadButton';
 import ColumnFilterPopover from './filters/ColumnFilterPopover';
 import FilterContext from './filters/FilterContext';
 import { getAdHocFilter } from './filters/helpers';
@@ -91,11 +91,13 @@ const DashboardTableHeadCell: React.FC<HeadCellProps> = ({
 const HeaderContent = styled.div`
   display: flex;
   flex-direction: row;
+  line-height: 0;
 `;
 
 const HeaderTitle = styled.div`
-  margin-right: 4px;
+  margin-right: 8px;
   user-select: none;
+  line-height: 24px;
 `;
 
 const HeaderControls = styled.div`
@@ -111,9 +113,8 @@ const OrderButton: React.FC<OrderButtonProps> = ({
   direction,
   onSetDirection
 }) => (
-  <IconButton
-    color={direction === null ? undefined : 'primary'}
-    size="small"
+  <DashboardTableHeadButton
+    active={direction !== null}
     onClick={() => onSetDirection(getNextDirection(direction))}
   >
     {direction === 'desc' ? (
@@ -121,7 +122,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
     ) : (
       <ArrowUpwardIcon fontSize="inherit" />
     )}
-  </IconButton>
+  </DashboardTableHeadButton>
 );
 
 function getNextDirection(currentDirection: SortDirection | null): SortDirection {
@@ -145,14 +146,13 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   return (
     <>
-      <IconButton
-        color={active ? 'primary' : undefined}
-        size="small"
+      <DashboardTableHeadButton
+        active={active}
         ref={el => setAnchorEl(el)}
         onClick={() => setPopoverOpen(!popoverOpen)}
       >
         <FilterListIcon fontSize="inherit" />
-      </IconButton>
+      </DashboardTableHeadButton>
       <ColumnFilterPopover
         column={column}
         open={popoverOpen}

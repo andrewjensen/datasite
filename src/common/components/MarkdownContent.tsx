@@ -1,7 +1,12 @@
 import React, { ReactNode } from 'react';
 import Markdown from 'markdown-to-jsx';
 import styled from 'styled-components';
-const MarkdownContent: React.FC = ({ children }) => (
+
+interface MarkdownContentProps {
+  content: string
+}
+
+const MarkdownContent: React.FC<MarkdownContentProps> = ({ content }) => (
   <Container>
     <Markdown
       options={{
@@ -12,7 +17,7 @@ const MarkdownContent: React.FC = ({ children }) => (
           }
         }
       }}
-    >{children}</Markdown>
+    >{content}</Markdown>
   </Container>
 );
 

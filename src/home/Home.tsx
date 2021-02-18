@@ -27,7 +27,7 @@ const Home: React.FC = () => {
           <LayoutContainer>
             <SiteTitle>{manifest.general.title}</SiteTitle>
 
-            <MarkdownContent>{manifest.general.description}</MarkdownContent>
+            <MarkdownContent content={manifest.general.description} />
 
             <DashboardList
               dashboards={manifest.dashboards}

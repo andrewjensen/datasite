@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useReducer } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -14,17 +14,12 @@ import {
 } from './interfaces';
 import MarkdownContent from '../common/components/MarkdownContent';
 import DatasetContext from '../common/state/DatasetContext';
-import { encodeState, decodeState } from './urlState';
-import { getNextFilterId } from './filters/helpers';
+import { encodeState } from './urlState';
+import { dashboardViewReducer, INITIAL_STATE } from './dashboardViewReducer';
 
 interface Props {
   dashboard: ManifestDashboard
 }
-
-const EMPTY_ORDER_SETTING: OrderSetting = {
-  column: null,
-  direction: 'asc'
-};
 
 const DashboardView: React.FC<Props> = ({
   dashboard
@@ -33,84 +28,70 @@ const DashboardView: React.FC<Props> = ({
   const location = useLocation();
   const history = useHistory();
 
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<FilterSetting[]>(dashboard.filters);
-  const [allRows, setAllRows] = useState<DataRow[]>([]);
+  const [state, dispatch] = useReducer(dashboardViewReducer, INITIAL_STATE);
+
   const [visibleRows, setVisibleRows] = useState<DataRow[]>([]);
-  const [orderSetting, setOrderSetting] = useState<OrderSetting>(EMPTY_ORDER_SETTING);
+  const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
 
   const updateTableData = useCallback(async (currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) => {
     setIsTableLoading(true);
 
     const rowsToSet =
-      allRows.length
-        ? allRows
+      state.allRows.length
+        ? state.allRows
         : dataset!.rows;
 
     const newData = await applyTableSettingsAsync(rowsToSet, currentFilters, currentOrderSetting);
     setVisibleRows(newData);
 
     setIsTableLoading(false);
-  }, [dataset, allRows, setIsTableLoading, setVisibleRows]);
+  }, [state, dataset, setIsTableLoading, setVisibleRows]);
 
+  // Load the dashboard
   useEffect(() => {
-    if (dataset) {
-      setFilters(dashboard.filters);
-      setAllRows(dataset.rows);
-      setVisibleRows(dataset.rows);
-      setOrderSetting(EMPTY_ORDER_SETTING);
-    }
-  }, [dataset, dashboard]);
-
-  useEffect(() => {
-    if (!isInitialized) {
+    if (dataset && !state.isLoaded) {
       const searchParams = new URLSearchParams(location.search);
-      const state = searchParams.get('state');
-      if (state) {
-        const { filters: decodedFilters, orderSetting } = decodeState(state);
-        const mergedFilters = mergeFilters(filters, decodedFilters);
-
-        setOrderSetting(orderSetting);
-        setFilters(mergedFilters);
-        updateTableData(mergedFilters, orderSetting);
-      }
-      setIsInitialized(true);
+      const urlState = searchParams.get('state');
+      dispatch({
+        type: 'LOAD_DASHBOARD',
+        dataset,
+        dashboard,
+        urlState
+      });
     }
-  }, [location, filters, isInitialized, setIsInitialized, setOrderSetting, updateTableData]);
+  }, [state, dispatch, dataset, dashboard, location.search]);
+
+  // Update visible rows asynchronously when other settings change
+  useEffect(() => {
+    updateTableData(state.filters, state.orderSetting);
+
+    // Update the urlState to match the new settings
+    const encoded = encodeState(state.filters, state.orderSetting);
+    history.replace(`${location.pathname}?state=${encoded}`);
+
+  }, [history, location.pathname, state.allRows, state.filters, state.orderSetting, updateTableData]);
 
   function onToggleFilter(id: number) {
-    const newFilters = filters
+    const newFilters = state.filters
       .map(filter =>
         filter.id === id
           ? ({ ...filter, enabled: !filter.enabled })
           : filter
       );
-    setFilters(newFilters);
-    updateTableData(newFilters, orderSetting);
-    updateUrlState(newFilters, orderSetting);
+    dispatch({ type: 'SET_FILTERS', filters: newFilters });
   }
 
   function onSetFilters(newFilters: FilterSetting[]) {
-    setFilters(newFilters);
-    updateTableData(newFilters, orderSetting);
-    updateUrlState(newFilters, orderSetting);
+    dispatch({ type: 'SET_FILTERS', filters: newFilters });
   }
 
   function updateOrdering(newOrderSetting: OrderSetting) {
-    setOrderSetting(newOrderSetting);
-    updateTableData(filters, newOrderSetting);
-    updateUrlState(filters, newOrderSetting);
-  }
-
-  function updateUrlState(currentFilters: FilterSetting[], currentOrderSetting: OrderSetting) {
-    const encoded = encodeState(currentFilters, currentOrderSetting);
-    history.replace(`${location.pathname}?state=${encoded}`);
+    dispatch({ type: 'SET_ORDER', orderSetting: newOrderSetting });
   }
 
   return (
     <FilterContext.Provider value={{
-      filters,
+      filters: state.filters,
       onToggleFilter,
       onSetFilters
     }}>
@@ -125,7 +106,7 @@ const DashboardView: React.FC<Props> = ({
         <InnerItem>
           <FilterControlPanel
             displayedRowCount={visibleRows.length}
-            totalRowCount={allRows.length}
+            totalRowCount={state.allRows.length}
             headers={dataset!.headers}
           />
         </InnerItem>
@@ -135,7 +116,7 @@ const DashboardView: React.FC<Props> = ({
             isLoading={isTableLoading}
             headers={dataset!.headers}
             rows={visibleRows}
-            orderSetting={orderSetting}
+            orderSetting={state.orderSetting}
             onChangeOrderSetting={updateOrdering}
           />
         </TableContainer>
@@ -173,14 +154,3 @@ const Header = styled.h1`
 const DescriptionContainer = styled.div`
   margin: 0 2rem;
 `;
-
-function mergeFilters(existingFilters: FilterSetting[], newFilters: FilterSetting[]): FilterSetting[] {
-  const nextId = getNextFilterId(existingFilters);
-  const newFiltersWithIds: FilterSetting[] = newFilters
-    .map((filter, idx) => ({
-      ...filter,
-      id: nextId + idx
-    }));
-
-  return [...existingFilters, ...newFiltersWithIds];
-}

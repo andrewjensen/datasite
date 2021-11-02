@@ -41,6 +41,7 @@
     "base64-js": "^1.5.1",
     "markdown-to-jsx": "^7.1.1",
     "react": "^16.14.0",
+    "react-csv-downloader": "^2.7.0",
     "react-dom": "^16.14.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router-dom';
+import CsvDownloader from 'react-csv-downloader'
 
 import { applyTableSettingsAsync } from './services/TableSettings';
 import DashboardTable from './DashboardTable';
@@ -108,6 +109,14 @@ const DashboardView: React.FC<Props> = ({
     history.replace(`${location.pathname}?state=${encoded}`);
   }
 
+  async function dataForCSV() {
+    return Promise.resolve(visibleRows.map((row) => {
+      return Object.keys(row.cells).reduce((newObj, key) => {
+        return {...newObj, [key]: row.cells[key].toString()}
+      }, {})
+    }))
+  }
+
   return (
     <FilterContext.Provider value={{
       filters,
@@ -128,6 +137,10 @@ const DashboardView: React.FC<Props> = ({
             totalRowCount={allRows.length}
             headers={dataset!.headers}
           />
+
+          <CsvDownloader filename={`${dashboard.slug}.csv`} datas={dataForCSV}>
+            <DownloadButton>Download CSV</DownloadButton>
+          </CsvDownloader>
         </InnerItem>
 
         <TableContainer>
@@ -157,6 +170,10 @@ const Container = styled.div`
 
 const InnerItem = styled.div`
 
+`;
+
+const DownloadButton = styled.button`
+  margin: 0 2rem 1rem 2rem;
 `;
 
 const TableContainer = styled.div`
